@@ -1,15 +1,17 @@
 FROM ubuntu:22.04
 
-# 環境変数と非対話モード設定
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 必須パッケージをインストール（Node.js、PHP、MariaDBクライアントなど）
+# 必須パッケージ
 RUN apt-get update && apt-get install -y \
+    software-properties-common \
     curl \
-    gnupg \
     git \
     unzip \
     zip \
+    gnupg \
+    ca-certificates \
+    mariadb-client \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -17,58 +19,49 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libssl-dev \
-    mariadb-client \
-    ca-certificates \
-    php \
-    php-cli \
-    php-fpm \
-    php-mbstring \
-    php-xml \
-    php-curl \
-    php-bcmath \
-    php-zip \
-    php-gd \
-    php-mysql \
-    php-tokenizer \
-    php-dom \
-    php-pcntl \
-    php-opcache \
-    php-readline \
-    software-properties-common \
+    && add-apt-repository ppa:ondrej/php -y \
+    && apt-get update && apt-get install -y \
+    php8.2 php8.2-cli php8.2-fpm php8.2-mbstring php8.2-xml php8.2-curl php8.2-bcmath php8.2-zip \
+    php8.2-gd php8.2-mysql php8.2-tokenizer php8.2-dom php8.2-pcntl php8.2-readline php8.2-opcache \
     && apt-get clean
 
-# Node.js v18 をインストール
+# Node.js v18
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
-# Composer インストール
+# Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # ---------- フロントエンド ----------
-
 WORKDIR /frontend
 
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install
+COPY frontend/package*.json ./
+RUN npm ci
 
-COPY frontend/. ./
+COPY frontend/ ./
 
 EXPOSE 3000
 
 # ---------- バックエンド ----------
-
 WORKDIR /var/www
 
-COPY backend/. ./
+COPY backend/ ./
 
 RUN composer install --no-dev --optimize-autoloader || true
 
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache || true
+# Laravel 初期化処理
+RUN cp .env.example .env && \
+    php artisan key:generate && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 9000
 
-# ---------- 起動コマンド ----------
-# supervisordなどで同時起動を制御するか、複数コンテナ推奨（下記は参考用）
-CMD ["php-fpm"]
+CMD ["php-fpm8.2"]
+
+
+COPY backend/docker-entrypoint.sh /var/www/docker-entrypoint.sh
+RUN chmod +x /var/www/docker-entrypoint.sh

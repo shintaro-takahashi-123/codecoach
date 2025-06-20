@@ -10,11 +10,25 @@ services:
       - ./backend:/var/www
       - ./frontend:/frontend
     ports:
-      - "9000:9000"   # PHP-FPM
-      - "3000:3000"   # Node.js dev server
+      - "9000:9000"  # PHP-FPM
     depends_on:
       - db
-    command: php-fpm
+    entrypoint: ["sh", "-c", "./docker-entrypoint.sh"]
+    working_dir: /var/www
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codecoach_frontend
+    working_dir: /frontend
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - "3000:3000"
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - app
 
   db:
     image: mysql:8.0
