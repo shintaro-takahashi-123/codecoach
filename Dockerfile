@@ -1,67 +1,69 @@
-FROM ubuntu:22.04
+# =============================================================
+#  ベース：Debian bookworm slim に PHP-FPM 8.2 が入った公式イメージ
+# =============================================================
+FROM php:8.2-fpm-bookworm
 
+# タイムゾーンと非対話モード
+ENV TZ=Asia/Tokyo
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 必須パッケージ
-RUN apt-get update && apt-get install -y \
-    software-properties-common \
-    curl \
-    git \
-    unzip \
-    zip \
-    gnupg \
-    ca-certificates \
-    mariadb-client \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libssl-dev \
-    && add-apt-repository ppa:ondrej/php -y \
-    && apt-get update && apt-get install -y \
-    php8.2 php8.2-cli php8.2-fpm php8.2-mbstring php8.2-xml php8.2-curl php8.2-bcmath php8.2-zip \
-    php8.2-gd php8.2-mysql php8.2-tokenizer php8.2-dom php8.2-pcntl php8.2-readline php8.2-opcache \
-    && apt-get clean
+# -------------------------------------------------------------
+#   1) OS 依存ライブラリ＋PHP 拡張をビルド
+# -------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl unzip zip gnupg mariadb-client \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    libonig-dev libxml2-dev libzip-dev \
+    # ── PHP 拡張をコンパイル ───────────────────────────
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" \
+         pdo_mysql mbstring exif pcntl bcmath zip gd opcache \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Node.js v18
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
+# -------------------------------------------------------------
+#   2) Composer
+# -------------------------------------------------------------
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# -------------------------------------------------------------
+#   3) Node.js 20  （Laravel Mix／vite 等を同じコンテナで動かす想定）
+# -------------------------------------------------------------
+# --- Node.js 20 LTS -------------------------------------------------
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g npm@latest      
+# ← 20 なら問題なく 11.x が入る
 
-# ---------- フロントエンド ----------
+
+# =============================================================
+#  フロントエンド
+# =============================================================
 WORKDIR /frontend
 
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci          # lockfile を尊重してインストール
 
 COPY frontend/ ./
+# 必要であればここで `npm run build` する
+# RUN npm run build
 
 EXPOSE 3000
 
-# ---------- バックエンド ----------
+# =============================================================
+#  バックエンド（Laravel）
+# =============================================================
 WORKDIR /var/www
 
 COPY backend/ ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
-RUN composer install --no-dev --optimize-autoloader || true
-
-# Laravel 初期化処理
-RUN cp .env.example .env && \
-    php artisan key:generate && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
-RUN chown -R www-data:www-data storage bootstrap/cache
-
-EXPOSE 9000
-
-CMD ["php-fpm8.2"]
-
-
+# Laravel 用エントリポイント
 COPY backend/docker-entrypoint.sh /var/www/docker-entrypoint.sh
 RUN chmod +x /var/www/docker-entrypoint.sh
+
+# php-fpm は公式イメージのデフォルト Port 9000
+EXPOSE 9000
+
+ENTRYPOINT ["/var/www/docker-entrypoint.sh"]
+CMD ["php-fpm"]
