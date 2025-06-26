@@ -34,4 +34,4 @@ chown -R www-data:www-data storage bootstrap/cache
 
 # PHP-FPM 起動
 echo "[ENTRYPOINT] php-fpm8.2 起動"
-exec php-fpm8.2
+exec php-fpm
