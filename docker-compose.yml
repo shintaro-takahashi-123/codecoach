@@ -10,6 +10,7 @@ services:
       - ./backend:/var/www
       - ./frontend:/frontend
     ports:
+      - "8000:8000"
       - "9000:9000"  # PHP-FPM
     depends_on:
       - db
