@@ -11,6 +11,7 @@ services:
       # - "9000:9000"
     depends_on:
       - db
+    # entrypoint: ["sh", "-c", "./docker-entrypoint.sh"]
     working_dir: /var/www
     # entrypoint: ["sh", "-c", "./docker-entrypoint.sh"]
 
