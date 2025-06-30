@@ -1,35 +1,29 @@
-version: '3.8'
-
 services:
-  app:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
-    container_name: codecoach_app
+    # container_name: codecoach_app
     volumes:
       - ./backend:/var/www
-      - ./frontend:/frontend
     ports:
       - "8000:8000"
-      - "9000:9000"  # PHP-FPM
+      # - "9000:9000"
     depends_on:
       - db
-    entrypoint: ["sh", "-c", "./docker-entrypoint.sh"]
     working_dir: /var/www
+    # entrypoint: ["sh", "-c", "./docker-entrypoint.sh"]
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: codecoach_frontend
-    working_dir: /frontend
+      context: ./frontend
     volumes:
-      - ./frontend:/frontend
+    - ./frontend:/frontend
+    - /frontend/node_modules
     ports:
-      - "3000:3000"
-    command: ["npm", "run", "dev"]
+      - "5173:5173"
     depends_on:
-      - app
+      - backend
 
   db:
     image: mysql:8.0
