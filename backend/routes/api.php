@@ -7,7 +7,8 @@ use App\Http\Controllers\LearningLogController;
    
 // });
 
-Route::post('/learning_logs', [LearningLogController::class, 'store']);
-Route::get('/learning_logs', [LearningLogController::class, 'index']);
-Route::get('/learning_logs/{id}', [LearningLogController::class, 'show']);
-Route::put('/learning_logs/{id}', [LearningLogController::class, 'update']);
+Route::post('/learning_logs', [LearningLogController::class, 'LearningLogRegister']);
+Route::get('/learning_logs', [LearningLogController::class, 'LearningLogShowList']);
+Route::get('/learning_logs/{id}', [LearningLogController::class, 'SpecificLearningLog']);
+Route::put('/learning_logs/{id}', [LearningLogController::class, 'UpdateLearningLog']);
+

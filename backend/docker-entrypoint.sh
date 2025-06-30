@@ -33,5 +33,5 @@ fi
 chown -R www-data:www-data storage bootstrap/cache
 
 # PHP-FPM 起動
-echo "[ENTRYPOINT] php-fpm8.2 起動"
-exec php-fpm
+echo "[ENTRYPOINT] php 起動"
+exec php artisan serve --host 0.0.0.0
