@@ -35,6 +35,7 @@ class Kernel extends HttpKernel
             // throttle は必要に応じて
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            EnsureFrontendRequestsAreStateful::class,
         ],
     ];
 
