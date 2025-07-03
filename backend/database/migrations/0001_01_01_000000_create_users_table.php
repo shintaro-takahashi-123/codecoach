@@ -7,12 +7,26 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id'); // ユーザーID（PK, AUTO_INCREMENT）
-            $table->string('name', 255); // ユーザー名
-            $table->string('email', 255)->unique(); // メールアドレス（ユニーク）
-            $table->string('password', 255); // ハッシュ化されたパスワード
-            $table->timestamp('created_at')->useCurrent(); // 作成日時（デフォルト現在時刻）
-            $table->timestamp('updated_at')->nullable(); // 更新日時（NULL許可）
+             // 主キー：自動インクリメントID（bigint型）
+             $table->id();
+
+             // ユーザー名（255文字まで）
+             $table->string('name');
+ 
+             // メールアドレス（ユニーク制約付き、255文字まで）
+             $table->string('email')->unique();
+ 
+             // メール認証日時（未認証時はnull）
+             $table->timestamp('email_verified_at')->nullable();
+ 
+             // パスワード（ハッシュ化された文字列）
+             $table->string('password');
+ 
+             // 「次回もログイン状態を維持する」ためのトークン
+             $table->rememberToken();
+ 
+             // 作成日時・更新日時（Laravelが自動で管理）
+             $table->timestamps();
         });
     }
 
