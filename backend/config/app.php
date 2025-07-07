@@ -145,6 +145,11 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+
+         // ...（他のサービスプロバイダ）
+        OpenAI\Laravel\ServiceProvider::class,
+
     ],
 
     'aliases' => [
