@@ -1,0 +1,16 @@
+.button {
+    width: 266px;
+    height: 49px;
+    position: absolute;
+    background: #26D991;
+    border: 1px solid black;
+  }
+  
+  .button-text {
+    position: absolute;
+    color: white;
+    font-size: 15px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    word-wrap: break-word;
+  }
