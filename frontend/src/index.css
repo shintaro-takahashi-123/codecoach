@@ -68,3 +68,58 @@ p {
   font-size: 0.9rem;
   margin-top: 8px;
 }
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.form-box {
+  border: 1px solid #ccc;
+  padding: 2rem;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.form-title {
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.form-description {
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #555;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

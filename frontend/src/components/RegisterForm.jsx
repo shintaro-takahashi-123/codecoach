@@ -28,15 +28,41 @@ const RegisterForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h2>新規登録画面</h2>
-      <input type="text" placeholder="ユーザー名" value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="email" placeholder="メールアドレス" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="パスワード" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <input type="password" placeholder="パスワード確認" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
-      <button type="submit">アカウント作成</button>
-      <p><a href="/login">ログイン画面へ</a></p>
-    </form>
+    <div className="form-container">
+      <div className="form-box">
+        <h2 className="form-title">新規登録画面</h2>
+        <form onSubmit={handleSubmit} className="form-group">
+          <input
+            type="text"
+            placeholder="ユーザー名"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            type="email"
+            placeholder="メールアドレス"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="パスワード"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="パスワード確認"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+          <button type="submit">アカウント作成</button>
+        </form>
+        <p className="back-link">
+          <a href="/login">ログイン画面へ</a>
+        </p>
+      </div>
+    </div>
   );
 };
 
