@@ -1,0 +1,8 @@
+.header {
+    height: 70px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    background: linear-gradient(90deg, #4CFCFF 0%, #26D991 50%, #01B829 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
