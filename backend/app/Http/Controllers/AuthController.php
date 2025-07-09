@@ -17,21 +17,18 @@ class AuthController extends Controller
             'email'    => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:6',
         ]);
-        
+
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user); // ← ここでログイン状態にする
 
         return response()->json([
             'status'  => 'success',
-            'data'    => [
-                'user'  => $user,
-                'token' => $token,
-            ],
+            'data'    => $user,
             'message' => 'Registration completed',
         ], 201);
     }
@@ -39,36 +36,42 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+
+        if (!Auth::attempt($credentials)) {
+            \Log::warning('ログイン失敗', $credentials);
             return response()->json([
-                'status'  => 'fail',
+                'status' => 'fail',
                 'message' => 'Invalid credentials',
             ], 401);
         }
 
-        $user  = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
-            'status'  => 'success',
-            'data'    => [
-                'user'  => $user,
-                'token' => $token,
-            ],
+            'status' => 'success',
             'message' => 'Login successful',
-        ], 200);
+            'data' => Auth::user(), // ← 追加
+        ]);
     }
+
+
 
     public function user(Request $request)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Not authenticated'
+            ], 401);
+        }
+
         return response()->json([
             'status'  => 'success',
             'data'    => $request->user(),
-            'message' => 'User fetched successfully'
         ]);
     }
+
 }

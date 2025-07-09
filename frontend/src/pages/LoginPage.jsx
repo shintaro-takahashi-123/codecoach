@@ -1,64 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import api from "../api/axios";
 import axios from "axios";
-import "../index.css";
-
-axios.defaults.withCredentials = true;
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
+import "../styles/LoginPage.css";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
-  // 初回にCSRF Cookieを取得（Sanctum用）
   useEffect(() => {
-    axios.get("http://localhost:8000/sanctum/csrf-cookie").catch((err) => {
-      console.error("CSRF cookie取得失敗", err);
+    axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+      withCredentials: true,
     });
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
-        email,
-        password,
-      });
-      alert("ログイン成功");
-      console.log(res.data);
+      await api.post("/login", { email, password });
 
-      // 任意：トップページやマイページに遷移
-      // window.location.href = "/dashboard";
+      const res = await api.get("/user");
+      login(res.data.data);
+
+      navigate("/annual-income");
     } catch (err) {
-      console.error("ログイン失敗", err.response?.data);
       alert("ログインエラー：メールアドレスまたはパスワードが無効です");
+      console.error(err);
     }
   };
 
   return (
     <>
-      <header className="header">
-        <h1>CodeCoach</h1>
+      <header>
+        <div className="header-title">CodeCoach</div>
       </header>
-      <form onSubmit={handleSubmit}>
-        <h2>ログイン</h2>
-        <input
-          type="email"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">ログイン</button>
-        <p>
-          アカウントをお持ちでない場合、<a href="/register">登録はこちら</a>
-        </p>
-      </form>
+
+      <div className="form-container">
+        <form onSubmit={handleSubmit} className="form-box">
+          <h2 className="form-title">ログイン</h2>
+          <p className="form-description">
+            登録済みのメールアドレスとパスワードを入力してください。
+          </p>
+          <div className="form-group">
+            <input
+              type="email"
+              placeholder="メールアドレス"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-input"
+              required
+            />
+            <input
+              type="password"
+              placeholder="パスワード"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+              required
+            />
+            <button type="submit" className="form-button">
+              ログイン
+            </button>
+          </div>
+          <p className="back-link">
+            アカウントをお持ちでない場合、<Link to="/register">登録はこちら</Link>
+          </p>
+        </form>
+      </div>
     </>
   );
 }

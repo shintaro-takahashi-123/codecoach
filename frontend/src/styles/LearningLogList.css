@@ -1,0 +1,30 @@
+.log-list-container {
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .log-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .log-item {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .log-item strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .log-item span {
+    display: block;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  

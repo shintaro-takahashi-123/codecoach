@@ -1,0 +1,84 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f6fbf4;
+    font-family: "Helvetica Neue", sans-serif;
+  }
+  
+  .home-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, #00f280, #00c8e0);
+    padding: 1rem 1.5rem;
+    color: white;
+    font-family: serif;
+  }
+  
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  
+  .home-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  .greeting {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #333;
+  }
+  
+  .home-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .home-button {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .home-button:hover {
+    border-color: #00a86b;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .icon {
+    font-size: 1.4rem;
+    color: #00a86b;
+  }
+  
+  .home-footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+  }
+  
+  .warning-text {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #d32f2f;
+    font-weight: bold;
+  }
+  

@@ -12,6 +12,4 @@ class LearningLog extends Model
         'problem_desc',
         'status',
     ];
-
-    public $timestamps = true;
 }

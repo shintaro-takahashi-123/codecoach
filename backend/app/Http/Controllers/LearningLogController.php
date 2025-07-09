@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\LearningLog;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,10 +11,10 @@ class LearningLogController extends Controller
 {
     public function store(Request $request)
     {
-        // バリデーション
         $validator = Validator::make($request->all(), [
             'problem_title' => 'required|string|max:255',
             'problem_desc' => 'nullable|string',
+            'status' => 'in:in_progress,completed,abandoned',
         ]);
 
         if ($validator->fails()) {
@@ -25,12 +26,11 @@ class LearningLogController extends Controller
             ], 422);
         }
 
-        // 学習履歴作成（ユーザーIDは仮に1固定。認証連携時に修正
         $learningLog = LearningLog::create([
             'user_id' => Auth::id(),
             'problem_title' => $request->problem_title,
             'problem_desc' => $request->problem_desc,
-            'status' => 'in_progress',
+            'status' => $request->status ?? 'in_progress',
         ]);
 
         return response()->json([
@@ -42,7 +42,10 @@ class LearningLogController extends Controller
 
     public function index()
     {
-        $logs = \App\Models\LearningLog::all(['id', 'user_id', 'problem_title', 'status', 'created_at']);
+        $logs = LearningLog::where('user_id', Auth::id())
+            ->select('id', 'problem_title', 'status', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'status' => 'success',
@@ -52,37 +55,40 @@ class LearningLogController extends Controller
 
     public function show($id)
     {
-        $learningLog = LearningLog::find($id);
+        $learningLog = LearningLog::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
 
         if (!$learningLog) {
             return response()->json([
                 'status' => 'fail',
-                'message' => 'Learning log not found'
+                'message' => 'Learning log not found or unauthorized'
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
             'data' => $learningLog
-        ], 200);
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        $learningLog = LearningLog::find($id);
+        $learningLog = LearningLog::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
 
         if (!$learningLog) {
             return response()->json([
                 'status' => 'fail',
-                'message' => 'Learning log not found'
+                'message' => 'Learning log not found or unauthorized'
             ], 404);
         }
 
-        // バリデーション
         $validator = Validator::make($request->all(), [
             'problem_title' => 'sometimes|required|string|max:255',
             'problem_desc' => 'nullable|string',
-            'status' => 'sometimes|required|string|in:in_progress,completed,abandoned', // 必要に応じてステータスの値を定義
+            'status' => 'sometimes|required|string|in:in_progress,completed,abandoned',
         ]);
 
         if ($validator->fails()) {
@@ -94,7 +100,6 @@ class LearningLogController extends Controller
             ], 422);
         }
 
-        // 更新
         $learningLog->fill($request->only(['problem_title', 'problem_desc', 'status']));
         $learningLog->save();
 
@@ -102,9 +107,6 @@ class LearningLogController extends Controller
             'status' => 'success',
             'data' => $learningLog,
             'message' => 'Learning log updated successfully',
-        ], 200);
+        ]);
     }
-
-
-
 }
