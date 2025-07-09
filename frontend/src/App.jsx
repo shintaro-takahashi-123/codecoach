@@ -9,8 +9,8 @@ import AnalysisResultPage from "./pages/AnalysisResultPage";
 import HomePage from "./pages/HomePage";
 import CodeCoachPage from "./pages/CodeCoachPage";
 import { StepProvider } from "./contexts/StepContext";
-import TestHintApi from "./TestHintApi";
-import ChatHintApi from "./ChatHintApi";
+// import TestHintApi from "./TestHintApi";
+// import ChatHintApi from "./ChatHintApi";
 
 function App() {
   return (
@@ -30,8 +30,8 @@ function App() {
           {/* その他 */}
           <Route path="/home" element={<HomePage />} />
           <Route path="/code-coach" element={<CodeCoachPage />} />
-          <Route path="/test-hint" element={<TestHintApi />} />
-          <Route path="/chat-hint" element={<ChatHintApi />} />
+          {/* <Route path="/test-hint" element={<TestHintApi />} />
+          <Route path="/chat-hint" element={<ChatHintApi />} /> */}
 
         </Routes>
       </BrowserRouter>
