@@ -1,20 +1,37 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import StartPage from "./pages/StartPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import ForgotPage from "./pages/ForgotPage";
-import DashboardPage from "./pages/DashboardPage";
+import AnnualIncomePage from "./pages/AnnualIncomePage";
+import JobTypePage from "./pages/JobTypePage";
+import SkillInputPage from "./pages/SkillInputPage";
+import AnalysisResultPage from "./pages/AnalysisResultPage";
+import HomePage from "./pages/HomePage";
+import CodeCoachPage from "./pages/CodeCoachPage";
+import { StepProvider } from "./contexts/StepContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot" element={<ForgotPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-      </Routes>
+    <StepProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<StartPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* ステップ形式のページ */}
+          <Route path="/annual-income" element={<AnnualIncomePage />} />
+          <Route path="/job-type" element={<JobTypePage />} />
+          <Route path="/skill-input" element={<SkillInputPage />} />
+          <Route path="/analysis-result/:id" element={<AnalysisResultPage />} />
+
+          {/* その他 */}
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/code-coach" element={<CodeCoachPage />} />
+
+        </Routes>
       </BrowserRouter>
+    </StepProvider>
   );
 }
 

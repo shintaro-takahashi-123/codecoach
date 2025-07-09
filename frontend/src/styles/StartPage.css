@@ -1,0 +1,119 @@
+/* 全体のリセットと基本設定 */
+body, html, #root {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #ffffff;
+    height: 100%;
+  }
+  
+  /* ヘッダー */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, #00f280, #00c8e0);
+    padding: 1rem 1.5rem;
+    color: white;
+    font-family: serif;
+  }
+  
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  
+  /* スタートページ全体のレイアウト */
+  .start-page {
+    display: flex;
+    height: calc(100vh - 72px); /* ヘッダー分を引く */
+    overflow: hidden;
+  }
+  
+  /* 左側：ロゴとブランド */
+  .left-section {
+    width: 40%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+  }
+  
+  /* 仕切り線 */
+  .left-section::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 0;
+    height: 80%;
+    width: 1px;
+    background-color: #000; 
+  }
+  
+  /* ロゴ */
+  .logo {
+    width: 160px;
+    margin-bottom: 20px;
+  }
+  
+  .powered-by {
+    font-size: 18px;
+    color: #333;
+    margin-top: 10px;
+  }
+  
+  /* 右側：説明とボタン */
+  .right-section {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 80px;
+    background-color: #ffffff;
+  }
+  
+  .description {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 40px;
+    white-space: pre-line;
+  }
+  
+  /* ログインボタン */
+  .login-button {
+    align-self: center;
+    background-color: #00a86b;
+    color: white;
+    font-size: 15px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: fit-content;          
+  }
+  
+  
+  .login-button:hover {
+    background-color: #008f5a;
+  }
+  
+  .fade-line {
+    opacity: 0;
+    transform: translateY(12px);
+    display: inline-block;
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  
+  .fade-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  

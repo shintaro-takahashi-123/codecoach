@@ -1,0 +1,114 @@
+.codecoach-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f6fbf4;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+.codecoach-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #00f280, #00c8e0);
+  padding: 1rem 1.5rem;
+  color: white;
+  font-family: serif;
+}
+
+.header-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.codecoach-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 200px; /* ← 幅を狭く */
+  background-color: #f0f4f3;
+  padding: 1rem;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.main-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 1rem 2rem;
+}
+
+.greeting {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+.chat-message {
+  margin-bottom: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  max-width: 80%;
+  line-height: 1.5;
+}
+
+.chat-message.user {
+  background-color: #e0f7fa;
+  align-self: flex-end;
+}
+
+.chat-message.ai {
+  background-color: #f1f8e9;
+  align-self: flex-start;
+}
+
+.chat-input-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+.chat-input-column textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+.chat-input-column button {
+  align-self: flex-end;
+  background-color: #00c8e0;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+}

@@ -40,6 +40,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+    
+        'api' => [ // ← これを追加
+            'driver' => 'sanctum', // Sanctumは通常sessionでOK（tokenの場合はtokenに）
+            'provider' => 'users',
+        ],
     ],
 
     /*

@@ -10,6 +10,8 @@ return new class extends Migration {
         Schema::create('learning_logs', function (Blueprint $table) {
             $table->bigIncrements('id');                   // ログID（PK, AUTO_INCREMENT）
             $table->unsignedBigInteger('user_id');         // ユーザーID（FK）
+            $table->text('model_answer')->nullable();
+            $table->text('explanation')->nullable();
 
             $table->string('problem_title', 255);          // 問題タイトル
             $table->text('problem_desc')->nullable();      // 問題の説明（nullable）
