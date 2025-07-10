@@ -1,33 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
-import api from "../api/axios";
-import axios from "axios";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginPage.css";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
-
-  useEffect(() => {
-    axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-      withCredentials: true,
-    });
-  }, []);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      await api.post("/login", { email, password });
+      const response = await login({ email, password });
 
-      const res = await api.get("/user");
-      login(res.data.data);
-
-      navigate("/annual-income");
+      if (response.status === 'success') {
+        // ↓ この行を変更しました
+        navigate("/annual-income");
+      } else {
+        setError(response.message || 'ログインに失敗しました。');
+      }
     } catch (err) {
-      alert("ログインエラー：メールアドレスまたはパスワードが無効です");
+      setError("ログインエラー：メールアドレスまたはパスワードが無効です");
       console.error(err);
     }
   };
@@ -61,6 +57,7 @@ function LoginPage() {
               className="form-input"
               required
             />
+            {error && <p className="error-message" style={{color: 'red'}}>{error}</p>}
             <button type="submit" className="form-button">
               ログイン
             </button>
