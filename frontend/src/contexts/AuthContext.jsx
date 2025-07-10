@@ -1,39 +1,92 @@
-import React, { createContext, useState, useEffect } from "react";
-import api from "../api/axios"; // ← axios.create({ baseURL, withCredentials: true })
+import { createContext, useState, useContext, useEffect } from 'react';
+import axios from '../api/axios';
 
-export const AuthContext = createContext();
+// API通信の関数 (Contextファイル内にまとめてもOK)
+const registerUser = async (userData) => {
+    const response = await axios.post('/register', userData);
+    return response.data;
+};
 
+const loginUser = async (credentials) => {
+    const response = await axios.post('/login', credentials);
+    return response.data;
+};
+
+const logoutUser = async () => {
+    await axios.post('/logout');
+};
+
+const getUser = async () => {
+    const response = await axios.get('/user');
+    return response.data;
+};
+
+
+// 1. Contextの作成
+const AuthContext = createContext();
+
+// 2. Context Providerの作成
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('authToken'));
+    const [isLoading, setIsLoading] = useState(true);
 
-  // 初回マウント時にログイン状態を確認
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/user");
-        setUser(res.data.data);
-      } catch (err) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+    useEffect(() => {
+        // アプリケーション起動時にトークンがあれば、ユーザー情報を取得しにいく
+        const verifyUser = async () => {
+            if (token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                try {
+                    const response = await getUser();
+                    if (response.status === 'success') {
+                        setUser(response.data);
+                    }
+                } catch (error) {
+                    console.error("Token is invalid, logging out.", error);
+                    setToken(null);
+                    localStorage.removeItem('authToken');
+                    delete axios.defaults.headers.common['Authorization'];
+                }
+            }
+            setIsLoading(false);
+        };
+        verifyUser();
+    }, [token]);
+
+    const login = async (credentials) => {
+        const response = await loginUser(credentials);
+        if (response.status === 'success') {
+            setToken(response.data.token);
+            localStorage.setItem('authToken', response.data.token);
+            setUser(response.data.user);
+        }
+        return response;
     };
 
-    fetchUser();
-  }, []);
+    const register = async (userData) => {
+        const response = await registerUser(userData);
+        if (response.status === 'success') {
+            setToken(response.data.token);
+            localStorage.setItem('authToken', response.data.token);
+            setUser(response.data.user);
+        }
+        return response;
+    };
 
-  const login = (userData) => {
-    setUser(userData);
-  };
+    const logout = async () => {
+        await logoutUser();
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem('authToken');
+        delete axios.defaults.headers.common['Authorization'];
+    };
 
-  const logout = () => {
-    setUser(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
+
+// 3. カスタムフックの作成・エクスポート
+export const useAuth = () => useContext(AuthContext);
