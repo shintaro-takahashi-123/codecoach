@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user'])
 
 // 認証が必要なAPIグループ
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     // 学習ログAPI
     Route::post('/learning_logs', [LearningLogController::class, 'store']);
     Route::get('/learning_logs', [LearningLogController::class, 'index']);
@@ -29,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // 認証が必要なヒント・模範解答API（必要ならこちらを有効化）
     // Route::post('/hints/generate', [HintController::class, 'generate']);
     // Route::post('/model_answers/generate', [ModelAnswerController::class, 'generate']);
+    
 });
 
 // 認証なしでも使えるAPI（現状維持）
