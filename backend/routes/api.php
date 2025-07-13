@@ -5,6 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LearningLogController;
 use App\Http\Controllers\HintController;
 use App\Http\Controllers\ModelAnswerController;
+use App\Http\Controllers\SkillAnalysisController;
+use App\Http\Controllers\CompanySuggestController;
+
+
+
+
 
 // Sanctum 認証用の CSRF Cookie 取得（React 側で最初に呼び出す）
 Route::get('/csrf-cookie', function () {
@@ -34,3 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
 // 認証なしでも使えるAPI（現状維持）
 Route::post('/hints/generate', [HintController::class, 'generate']);
 Route::post('/model_answers/generate', [ModelAnswerController::class, 'generate']);
+
+//企業表示
+
+Route::post('/analyze-skills', [SkillAnalysisController::class, 'analyze']);
+Route::options('/{any}', fn() => response('', 204))
+      ->where('any', '.*');   // ←プリフライト用の汎用 OPTIONS
+Route::post('/companies/suggest', [CompanySuggestController::class, 'suggest']);

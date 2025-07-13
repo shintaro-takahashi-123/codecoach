@@ -4,28 +4,66 @@ import "../styles/StepPage.css";
 import { StepContext } from "../contexts/StepContext";
 
 const skillsList = [
-  "HTML", "CSS", "JavaScript", "TypeScript", "React",
-  "Git", "Docker", "AWS"
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Git",
+  "Docker",
+  "AWS",
 ];
 
 const SkillInputPage = () => {
   const navigate = useNavigate();
-  const { setFormData } = useContext(StepContext);
+  const { formData, setFormData } = useContext(StepContext); // formDataも取得
   const [skills, setSkills] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (skill, level) => {
     setSkills((prev) => ({ ...prev, [skill]: level }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const filteredSkills = Object.fromEntries(
       Object.entries(skills).filter(([_, level]) => level !== "")
     );
 
+    // 送信データの組み立て
+    const postData = {
+      ...formData, // 年収・職種など前ステップの内容も送る
+      skills: filteredSkills,
+    };
+
     setFormData((prev) => ({ ...prev, skills: filteredSkills }));
 
-    // 仮のIDを使って次のページへ遷移（実際はAPIで生成されたIDを使う）
-    navigate("/analysis-result/temp-id");
+    setLoading(true);
+    try {
+      // 分析APIにPOST
+      const res = await fetch("http://localhost:8000/api/analyze-skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.status === "success") {
+        // 結果をstateかcontextで保持（ここではcontext渡し）
+        setFormData((prev) => ({
+          ...prev,
+          analysisResult: data.data,
+        }));
+        // ★ 遷移先を /analysis-result に統一
+        navigate("/company-list");
+      } else {
+        alert(data.message || "分析に失敗しました。");
+      }
+    } catch (err) {
+      alert("サーバーとの通信に失敗しました。");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,7 +81,9 @@ const SkillInputPage = () => {
           <span>結果</span>
         </div>
 
-        <h2 className="page-title">あなたのスキルレベルを自己評価してください</h2>
+        <h2 className="page-title">
+          あなたのスキルレベルを自己評価してください
+        </h2>
 
         <div className="skill-form">
           {skillsList.map((skill) => (
@@ -64,8 +104,12 @@ const SkillInputPage = () => {
           ))}
         </div>
 
-        <button className="form-button" onClick={handleSubmit}>
-          分析結果を見る
+        <button
+          className="form-button"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "分析中..." : "分析結果を見る"}
         </button>
       </div>
     </>
