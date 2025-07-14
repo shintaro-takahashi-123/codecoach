@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/AnnualIncomePage.css";
+import "../styles/StepPage.css";
 import { StepContext } from "../contexts/StepContext";
 
 const AnnualIncomePage = () => {
@@ -10,24 +10,28 @@ const AnnualIncomePage = () => {
   const incomeRanges = [
     {
       label: "～400万円",
+      value: "～400万円",
       description: "初めてのエンジニア経験、第二新卒レベル",
     },
     {
       label: "500～700万円",
+      value: "500～700万円",
       description: "実務経験あり / 中堅エンジニア層",
     },
     {
       label: "800～1,000万円",
+      value: "800～1,000万円",
       description: "リードエンジニア / 上級職種を目指す方",
     },
     {
       label: "1,000万円以上",
+      value: "1,000万円以上",
       description: "外資・CTO・フリーランス高単価案件など",
     },
   ];
 
-  const handleSelect = (range) => {
-    setFormData((prev) => ({ ...prev, income: range }));
+  const handleSelect = (value) => {
+    setFormData((prev) => ({ ...prev, income: value }));
     navigate("/job-type");
   };
 
@@ -41,8 +45,8 @@ const AnnualIncomePage = () => {
         <div className="progress-bar">
           <span className="active">年収</span>
           <span>職種</span>
-          <span>企業</span>
           <span>スキル診断</span>
+          <span>企業</span>
           <span>結果</span>
         </div>
 
@@ -53,7 +57,7 @@ const AnnualIncomePage = () => {
             <div
               key={index}
               className="option-box clickable"
-              onClick={() => handleSelect(range.label)}
+              onClick={() => handleSelect(range.value)}
             >
               <strong>{range.label}</strong>
               <span>{range.description}</span>

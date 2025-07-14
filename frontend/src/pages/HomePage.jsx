@@ -12,8 +12,20 @@ const HomePage = () => {
   const [showWarning, setShowWarning] = useState(false);
 
   const handleCareerReset = () => {
-    localStorage.removeItem("userProfile"); // 例：保存していた診断データを削除
-    navigate("/annual-income"); // 希望年収ページへ遷移
+    localStorage.removeItem("userProfile"); // 診断データ削除
+    navigate("/annual-income"); // キャリア入力へ
+  };
+
+  const handleViewAnalysis = () => {
+    navigate("/analysis-result");
+  };
+
+  const handleCareerCoachClick = () => {
+    setShowWarning(true); // 警告モードON
+  };
+
+  const cancelReset = () => {
+    setShowWarning(false); // 警告モード解除
   };
 
   return (
@@ -22,34 +34,39 @@ const HomePage = () => {
         <div className="header-title">CodeCoach</div>
       </header>
 
-
       <main className="home-main">
-        <h2 className="greeting">こんにちは {userName} さん</h2>
+        <h2 className="greeting">こんにちは <span className="highlighted-name">{userName}</span> さん</h2>
 
         <div className="home-buttons">
-          <div className="home-button">
+          {/* スキル診断情報を見る */}
+          <div className="home-button" onClick={handleViewAnalysis}>
             <FaSearch className="icon" />
             <span>スキル診断情報をみる</span>
           </div>
 
-          <div
-            className="home-button"
-            onMouseEnter={() => setShowWarning(true)}
-            onMouseLeave={() => setShowWarning(false)}
-            onClick={handleCareerReset}
-          >
+          {/* キャリアコーチ（警告付き） */}
+          <div className="home-button" onClick={handleCareerCoachClick}>
             <FaPencilAlt className="icon" />
             <span>キャリアコーチ</span>
+
             {showWarning && (
-              <div className="warning-text">※診断結果はすべてリセットされます</div>
+              <div className="warning-container">
+                <div className="warning-text">
+                  診断結果はすべてリセットされます。よろしいですか？
+                </div>
+                <div className="warning-actions">
+                  <button onClick={handleCareerReset}>はい</button>
+                  <button onClick={cancelReset}>戻る</button>
+                </div>
+              </div>
             )}
           </div>
 
+          {/* コードコーチ */}
           <div className="home-button" onClick={() => navigate("/code-coach")}>
             <FaHandshake className="icon" />
             <span>コードコーチ</span>
-        </div>
-
+          </div>
         </div>
       </main>
 

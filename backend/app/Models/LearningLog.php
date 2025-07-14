@@ -11,5 +11,7 @@ class LearningLog extends Model
         'problem_title',
         'problem_desc',
         'status',
+        'model_answer',     // ✅ 追加された模範解答
+        'explanation',      // ✅ 追加された解説
     ];
 }

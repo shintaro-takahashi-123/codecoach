@@ -8,23 +8,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('learning_logs', function (Blueprint $table) {
-            $table->bigIncrements('id');                   // ログID（PK, AUTO_INCREMENT）
-            $table->unsignedBigInteger('user_id');         // ユーザーID（FK）
-            $table->text('model_answer')->nullable();
-            $table->text('explanation')->nullable();
-
-            $table->string('problem_title', 255);          // 問題タイトル
-            $table->text('problem_desc')->nullable();      // 問題の説明（nullable）
-
-            // ENUM型はLaravelでは直接対応が難しいので文字列型で代用し、制約はアプリ側で管理する場合が多いです。
-            // もしDBレベルで制約を入れたい場合はRaw文を使う方法もありますがここではstringにしています。
-            $table->string('status')->default('in_progress');  // ステータス（'in_progress'がデフォルト）
-
-            $table->timestamp('created_at')->useCurrent();    // 作成日時
-            $table->timestamp('updated_at')->nullable();      // 更新日時
-
-            // 外部キー制約
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigIncrements('id');// ✅ PRIMARY KEY
+            $table->unsignedBigInteger('user_id')->nullable();          // ユーザーIDをnull許容
+            $table->text('model_answer')->nullable();                  // 模範解答
+            $table->text('explanation')->nullable();                   // 解説
+            $table->string('problem_title', 255)->nullable();          // タイトルもnull許容に変更
+            $table->text('problem_desc')->nullable();                  // 説明
+            $table->string('status')->nullable();                      // ステータス
+            $table->timestamps();              // 更新日時（すでにnullable）
+            
         });
     }
 

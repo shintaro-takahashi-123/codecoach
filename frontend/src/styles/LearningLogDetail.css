@@ -1,0 +1,78 @@
+/* ヘッダー */
+.log-header {
+    background-color: #222;
+    padding: 1rem 0;
+    text-align: center;
+  }
+  
+  .header-title {
+    font-size: 1.8rem;
+    color: white;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  /* 戻るボタン */
+  .back-button {
+    background-color: #007BFF;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* 詳細コンテナ */
+  .log-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.6;
+  }
+  
+  .log-detail-container h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: #222;
+  }
+  
+  .log-date {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 1.5rem;
+  }
+  
+  section {
+    margin-bottom: 2rem;
+  }
+  
+  section h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #444;
+    border-left: 4px solid #007BFF;
+    padding-left: 0.6rem;
+  }
+  
+  pre {
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    padding: 1rem;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.95rem;
+    color: #222;
+  }
+  

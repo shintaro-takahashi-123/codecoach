@@ -1,53 +1,67 @@
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import React, { useState, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios"; // ✅ axios.jsで withCredentials が設定されている前提
 import { AuthContext } from "../contexts/AuthContext";
 import "../styles/RegisterPage.css";
-
-axios.defaults.withCredentials = true;
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  useEffect(() => {
-    axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-      withCredentials: true,
-    });
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
 
     if (password.length < 6) {
       alert("パスワードは6文字以上で設定してください");
+      setSubmitting(false);
+      submittingRef.current = false;
       return;
     }
 
     if (password !== confirm) {
       alert("パスワードが一致しません");
+      setSubmitting(false);
+      submittingRef.current = false;
       return;
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/register",
-        { name, email, password },
-        { withCredentials: true }
-      );
+      console.log("🚀 登録開始", { name, email });
 
-      // 登録成功後にログイン状態を保存
+      const res = await api.post("/register", { name, email, password });
+      console.log("✅ 登録成功", res.data);
+
       login(res.data.data);
 
-      alert("登録成功！プロフィール入力へ進みます");
-      navigate("/annual-income");
+      const userRes = await api.get("/user");
+      console.log("🔐 認証済みユーザー取得", userRes.data);
+
+      navigate("/induction");
     } catch (err) {
-      console.error("登録エラー", err);
-      alert("登録エラー：メールアドレスが既に使われているか、サーバーエラーです");
+      const errorData = err.response?.data || err.message || err;
+      console.error("❌ 登録エラー詳細", errorData);
+
+      if (err.response?.status === 422 && errorData?.errors?.email?.[0]) {
+        alert(`登録に失敗：${errorData.errors.email[0]}`);
+      } else if (err.response?.status === 419) {
+        alert("CSRFエラーが発生しました。Cookieとセッションを確認してください。");
+      } else {
+        alert("登録に失敗しました。");
+      }
+    } finally {
+      setSubmitting(false);
+      submittingRef.current = false;
     }
   };
 
@@ -61,7 +75,8 @@ const RegisterPage = () => {
         <div className="form-box">
           <h2 className="form-title">新規登録</h2>
           <p className="form-description">必要事項を入力してアカウントを作成してください。</p>
-          <form onSubmit={handleSubmit} className="form-group">
+
+          <form className="form-group" onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="ユーザー名"
@@ -94,10 +109,15 @@ const RegisterPage = () => {
               className="form-input"
               required
             />
-            <button type="submit" className="form-button">
-              アカウント作成
+            <button
+              type="submit"
+              className="form-button"
+              disabled={submitting}
+            >
+              {submitting ? "登録中..." : "アカウント作成"}
             </button>
           </form>
+
           <p className="back-link">
             すでにアカウントをお持ちの方は <Link to="/login">ログイン</Link>
           </p>

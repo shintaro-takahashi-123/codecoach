@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import api from "../api/axios"; // ← axios.create({ baseURL, withCredentials: true })
+import api from "../api/axios";
 
 export const AuthContext = createContext();
 
@@ -7,13 +7,14 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 初回マウント時にログイン状態を確認
   useEffect(() => {
     const fetchUser = async () => {
+      if (user || !loading) return;
+
       try {
         const res = await api.get("/user");
         setUser(res.data.data);
-      } catch (err) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, []);
+  }, [user, loading]);
 
   const login = (userData) => {
     setUser(userData);
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, loading }}>
       {children}
     </AuthContext.Provider>
   );

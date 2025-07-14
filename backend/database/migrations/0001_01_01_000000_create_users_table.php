@@ -8,7 +8,7 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
              // 主キー：自動インクリメントID（bigint型）
-             $table->id();
+             $table->bigIncrements('user_id');
 
              // ユーザー名（255文字まで）
              $table->string('name');

@@ -11,13 +11,20 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    
+    protected $primaryKey = 'user_id';
+
+    public function getAuthIdentifierName()
+    {
+        return 'user_id';
+    }
+
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email', 
+        'password',
     ];
 
     protected $hidden = [
         'password', 'remember_token',
     ];
-    
 }

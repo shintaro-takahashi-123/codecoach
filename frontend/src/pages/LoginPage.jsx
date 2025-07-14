@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
-import api from "../api/axios";
-import axios from "axios";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios"; // ✅ axiosからapiに変更
 import { AuthContext } from "../contexts/AuthContext";
 import "../styles/LoginPage.css";
 
@@ -11,26 +10,24 @@ function LoginPage() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  useEffect(() => {
-    axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-      withCredentials: true,
-    });
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      // ✅ 認証リクエスト（CSRF除外済み想定）
       await api.post("/login", { email, password });
 
-      const res = await api.get("/user");
-      login(res.data.data);
+      // ✅ ユーザー情報の取得（withCredentialsは axios.js にて統一済み）
+      const userRes = await api.get("/user");
 
-      navigate("/annual-income");
+      login(userRes.data.data);
+      navigate("/Induction");
     } catch (err) {
-      alert("ログインエラー：メールアドレスまたはパスワードが無効です");
-      console.error(err);
+      const msg = err.response?.data?.message || "ログインできませんでした。メールアドレスまたはパスワードを確認してください。";
+      alert(msg);
+      console.error("Login failed:", err.response?.data || err);
     }
-  };
+  }
 
   return (
     <>

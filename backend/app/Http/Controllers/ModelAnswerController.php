@@ -30,6 +30,7 @@ class ModelAnswerController extends Controller
                 'content' => <<<SYS
 あなたは優秀なプログラミング講師です。
 必ず **有効な JSON オブジェクトのみ** を返してください（コードブロック禁止）。
+必ず answer_text において改行・インデントを維持してください（コードブロック記号なし）。
 スキーマ:
 {
   "answer_text": "最終的な模範解答のコードまたはアルゴリズム手順",

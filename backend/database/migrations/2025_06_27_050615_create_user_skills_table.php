@@ -16,8 +16,8 @@ return new class extends Migration {
 
             // 外部キー制約
             $table->foreign('user_id')
-                  ->references('id')->on('users')
-                  ->onDelete('cascade');
+                ->references('user_id')->on('users')
+                ->onDelete('cascade');
 
             $table->foreign('skill_id')
                   ->references('id')->on('skills')

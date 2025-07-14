@@ -1,0 +1,51 @@
+.induction-animated {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: calc(100vh - 72px);
+    padding: 5rem 2rem 4rem;
+    background-color: #f6fbf4;
+  }
+
+  .animated-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #333;
+    max-width: 720px;
+    text-align: center;
+    margin-top: 2.5rem;
+    margin-bottom: 6rem; /* ✅ ボタンとの距離拡張 */
+  }
+  .fade-line {
+    opacity: 0;
+    transform: translateY(12px);
+    display: inline-block;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  
+  .fade-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .start-button {
+    margin-top: auto;        
+    margin-bottom: 12rem;       
+    padding: 14px 32px;
+    font-size: 1.05rem;
+    width: 240px;
+    border-radius: 10px;
+    background-color: #00a86b;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  
+  .start-button:hover {
+    background-color: #008f5a;
+  }
+  

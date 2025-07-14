@@ -9,25 +9,29 @@ const JobTypePage = () => {
 
   const jobTypes = [
     {
-      title: "Web・アプリ開発",
+      label: "Web・アプリ開発",
+      value: "Web・アプリ開発",
       description: "HTML / CSS / JavaScript / React / Node.js など",
     },
     {
-      title: "AI・データ分析",
+      label: "AI・データ分析",
+      value: "AI・データ分析",
       description: "Python / 機械学習 / 統計 / データ可視化 など",
     },
     {
-      title: "モバイルアプリ開発",
+      label: "モバイルアプリ開発",
+      value: "モバイルアプリ開発",
       description: "Swift / Kotlin / Flutter / React Native など",
     },
     {
-      title: "データエンジニアリング",
+      label: "データエンジニアリング",
+      value: "データエンジニアリング",
       description: "ETL / BigQuery / Spark / データ基盤構築 など",
     },
   ];
 
-  const handleSelect = (type) => {
-    setFormData((prev) => ({ ...prev, jobType: type }));
+  const handleSelect = (value) => {
+    setFormData((prev) => ({ ...prev, jobType: value }));
     navigate("/skill-input");
   };
 
@@ -41,22 +45,22 @@ const JobTypePage = () => {
         <div className="progress-bar">
           <span>年収</span>
           <span className="active">職種</span>
-          <span>企業</span>
           <span>スキル診断</span>
+          <span>企業</span>
           <span>結果</span>
         </div>
 
         <h2 className="page-title">目指す職種を選択してください</h2>
 
         <div className="step-options">
-          {jobTypes.map((job, index) => (
+          {jobTypes.map((type, index) => (
             <div
               key={index}
               className="option-box clickable"
-              onClick={() => handleSelect(job.title)}
+              onClick={() => handleSelect(type.value)}
             >
-              <strong>{job.title}</strong>
-              <span>{job.description}</span>
+              <strong>{type.label}</strong>
+              <span>{type.description}</span>
             </div>
           ))}
         </div>

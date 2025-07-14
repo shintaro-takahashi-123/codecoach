@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 import "../styles/LearningLogList.css";
 
-const LearningLogList = () => {
+const LearningLogList = ({ refreshKey }) => {
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/learning_logs", { withCredentials: true })
-      .then((res) => {
-        setLogs(res.data.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("履歴取得エラー", err);
-        setLoading(false);
-      });
-  }, []);
+    const fetchLogs = async () => {
+      try {
+        const res = await api.get("/api/learning_logs");
+        if (res.data.status === "success") {
+          setLogs(res.data.data);
+        }
+      } catch (err) {
+        console.error("履歴取得エラー:", err);
+      }
+    };
 
-  if (loading) return <p>読み込み中...</p>;
+    fetchLogs();
+  }, [refreshKey]); // ✅ refreshKey の更新に応じて再取得
+
+  const handleClick = (id) => {
+    navigate(`/learning-log/${id}`);
+  };
 
   return (
     <div className="log-list-container">
-      <h2>学習履歴</h2>
-      {logs.length === 0 ? (
-        <p>履歴がありません。</p>
-      ) : (
-        <ul className="log-list">
-          {logs.map((log) => (
-            <li key={log.id} className="log-item">
-              <strong>{log.problem_title}</strong>
-              <span>ステータス: {log.status}</span>
-              <span>{new Date(log.created_at).toLocaleDateString()}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className="log-list">
+        {logs.map((log) => (
+          <li key={log.id} className="log-item" onClick={() => handleClick(log.id)}>
+            <strong>{log.problem_title || "(タイトルなし)"}</strong>
+            <span>{new Date(log.created_at).toLocaleString()}</span>
+          </li>
+        ))}
+        {logs.length === 0 && (
+          <li className="log-item">
+            <span>まだ履歴がありません</span>
+          </li>
+        )}
+      </ul>
     </div>
   );
 };

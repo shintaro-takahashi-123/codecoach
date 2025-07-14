@@ -31,13 +31,22 @@ body {
   
   .form-box {
     background: #fff;
-    padding: 2rem;
+    padding: 2rem 1.75rem; /* 上下2rem、左右1.75rem → バランス良好 */
+    box-sizing: border-box; /* ✅ 幅計算のズレ防止 */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 400px;
     text-align: center;
+    margin: 0 auto;
+    box-sizing: border-box; /* ✅ 念のため padding を含めて計算 */
   }
+
+  .form-group {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
   
   .form-title {
     margin-bottom: 1rem;

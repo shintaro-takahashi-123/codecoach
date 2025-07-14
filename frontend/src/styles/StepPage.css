@@ -17,7 +17,7 @@ header {
   
   .step-page {
     padding: 2rem;
-    background-color: #f6fbf4;
+    background-color: #fff;
     min-height: calc(100vh - 72px);
     display: flex;
     flex-direction: column;
@@ -143,4 +143,29 @@ header {
     font-size: 1rem;
   }
   
+  .form-button {
+    background-color: #00a86b;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    max-width: 300px;
+    width: 100%;
+    margin-top: 2rem;
+  }
+  
+  
+  .form-button:hover {
+    background-color: #008f5a;
+  }
+  
+  .form-button:disabled {
+    background-color: #a5d9c5;
+    cursor: not-allowed;
+  }
   

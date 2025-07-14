@@ -1,30 +1,103 @@
 .log-list-container {
-    padding: 1.5rem;
-    background-color: #fff;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .log-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .log-item {
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .log-item strong {
-    display: block;
-    font-size: 1.1rem;
-    margin-bottom: 0.3rem;
-  }
-  
-  .log-item span {
-    display: block;
-    font-size: 0.9rem;
-    color: #555;
-  }
-  
+  padding: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.log-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.log-item {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.log-item:hover {
+  background-color: #f0f0f0;
+}
+
+.log-item.expanded {
+  background-color: #fff;
+}
+
+.log-header {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.log-header strong {
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.log-header span {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 0.3rem;
+}
+
+.log-details {
+  margin-top: 1rem;
+  border-top: 1px dashed #ccc;
+  padding-top: 1rem;
+}
+
+.log-section {
+  margin-bottom: 1.5rem;
+}
+
+.log-section h4 {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #444;
+  border-left: 4px solid #007BFF;
+  padding-left: 0.5rem;
+}
+
+.log-block {
+  background-color: #fefefe;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: monospace;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.log-actions {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.log-actions button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.log-actions button:hover {
+  background-color: #0056b3;
+}
+
+.sidebar-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+}

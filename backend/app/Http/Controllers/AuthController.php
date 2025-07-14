@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * 新規登録
-     */
     public function register(Request $request)
     {
         $request->validate([
@@ -20,25 +19,44 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        // 登録後に自動ログイン（セッションベース）
-        Auth::login($user);
+            Auth::login($user);
+            $request->session()->regenerate();
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Registration completed',
-            'data'    => $user,
-        ], 201);
+            session(['user_id' => $user->id]); // 🔧 統一
+            session()->put('auth_user_id', $user->user_id); // 🔧 統一
+            session()->save();
+
+            Log::info('Auth::login完了', [
+                'user_id' => $user->user_id,
+                'guarded' => Auth::guard()->check(),
+                'session' => session()->all(),
+            ]);
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Registration completed',
+                'data'    => [
+                    'user_id' => $user->getAuthIdentifier(),
+                    'name'    => $user->name,
+                    'email'   => $user->email,
+                ],
+            ], 201);
+        } catch (\Throwable $e) {
+            Log::error('Register error', ['error' => $e->getMessage()]);
+            return response()->json([
+                'status'  => 'error',
+                'message' => '登録中にエラーが発生しました',
+            ], 500);
+        }
     }
 
-    /**
-     * ログイン
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -46,30 +64,51 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        try {
+            if (!Auth::attempt($request->only('email', 'password'), true)) {
+                Log::warning('ログイン失敗', ['email' => $request->email]);
+                return response()->json([
+                    'status'  => 'fail',
+                    'message' => 'Invalid credentials',
+                ], 401);
+            }
 
-        if (!Auth::attempt($credentials)) {
-            \Log::warning('ログイン失敗', ['email' => $request->email]);
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            Log::info('ログイン成功', [
+                'user_id' => $user->user_id,
+                'session' => session()->all(),
+            ]);
 
             return response()->json([
-                'status'  => 'fail',
-                'message' => 'Invalid credentials',
-            ], 401);
+                'status'  => 'success',
+                'message' => 'Login successful',
+                'data'    => [
+                    'user_id' => $user->user_id,
+                    'name'    => $user->name,
+                    'email'   => $user->email,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Login error', ['error' => $e->getMessage()]);
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'ログイン処理でエラーが発生しました',
+            ], 500);
         }
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Login successful',
-            'data'    => Auth::user(),
-        ]);
     }
 
-    /**
-     * ログイン中のユーザー情報取得
-     */
     public function user(Request $request)
     {
-        $user = $request->user(); // Sanctum に対応
+        $user = Auth::user();
+
+        Log::info('ユーザー取得', [
+            'user_id' => $user?->user_id,
+            'cookie'  => $request->cookie('laravel_session'),
+            'session' => session()->all(),
+        ]);
 
         if (!$user) {
             return response()->json([
@@ -79,8 +118,12 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'status'  => 'success',
-            'data'    => $user,
+            'status' => 'success',
+            'data'   => [
+                'user_id' => $user->user_id,
+                'name'    => $user->name,
+                'email'   => $user->email,
+            ],
         ]);
     }
 }
