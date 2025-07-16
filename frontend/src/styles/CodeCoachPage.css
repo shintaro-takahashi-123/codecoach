@@ -1,9 +1,33 @@
+.title-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.delete-chat-btn{
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.delete-chat-btn:hover {
+  background-color: #c82333;
+}
+
 .codecoach-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh; /* 固定高さ */
   background-color: #f6fbf4;
   font-family: "Helvetica Neue", sans-serif;
+  overflow: hidden; /* 全体スクロールを防ぐ */
 }
 
 .codecoach-header {
@@ -14,6 +38,7 @@
   padding: 1rem 1.5rem;
   color: white;
   font-family: serif;
+  flex-shrink: 0; /* ヘッダーサイズ固定 */
 }
 
 .header-title {
@@ -26,56 +51,133 @@
   flex: 1;
   display: flex;
   overflow: hidden;
+  min-height: 0; /* flexbox内での高さ制限を解除 */
+  height: 0; /* flexで残りの高さを確実に計算 */
 }
 
 .sidebar {
-  width: 200px;
   background-color: #f0f4f3;
   padding: 1rem;
-  border-right: 1px solid #ccc;
   overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+  min-height: 0; /* flexbox内でのスクロールを有効にする */
+  display: flex;
+  flex-direction: column;
+}
+
+/* スクロールバーのスタイリング */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.resize-handle {
+  width: 4px;
+  background-color: #e5e7eb;
+  cursor: ew-resize;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.resize-handle:hover {
+  background-color: #00c8e0;
+  width: 6px;
+}
+
+.resize-handle:active {
+  background-color: #00a8c5;
 }
 
 .sidebar-title {
   font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin: 0 0 0.75rem 0;
+  color: #333;
+  padding: 0 0.5rem;
+  flex-shrink: 0; /* 固定表示 */
 }
 
 .main-panel {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding: 1rem 2rem;
-  overflow-y: auto;
-  max-height: calc(100vh - 80px);
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* ヘッダー、チャット、入力エリア */
+  padding: 1.5rem 2rem;
+  min-width: 0;
+  overflow: hidden;
+  min-height: 0; /* gridレイアウトでの高さ制限を解除 */
+  gap: 1rem;
 }
 
 .greeting {
   font-size: 1.2rem;
-  margin-bottom: 1rem;
   color: #333;
+  margin: 0;
 }
 
 .chat-area {
-  flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 1.5rem;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 0.5rem;
-  max-height: 500px; /* ← 履歴が伸びすぎないよう制限 */
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0; /* gridの1frで自動的に適切な高さになる */
+}
+
+/* チャットエリアのスクロールバー */
+.chat-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-area::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.chat-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .chat-message {
   margin-bottom: 0.75rem;
-  padding: 0.6rem 0.9rem;
-  border-radius: 8px;
-  max-width: 80%;
-  line-height: 1.5;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  max-width: 85%;
+  line-height: 1.6;
   word-break: break-word;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .chat-message pre {
@@ -92,17 +194,29 @@
 
 /* ユーザー発言（右寄せ・青系） */
 .chat-message.user {
-  background-color: #e0f7fa;
+  background: linear-gradient(135deg, #00c8e0 0%, #00a8c5 100%);
+  color: white;
   align-self: flex-end;
+  margin-left: auto;
 }
 
-/* AI発言（左寄せ・赤枠付き） */
+/* AI発言（左寄せ・白背景） */
 .chat-message.ai,
 .chat-message.assistant {
-  background-color: #fef9f9;
+  background-color: #ffffff;
   align-self: flex-start;
-  border: 1px solid rgba(255, 100, 100, 0.3);
-  box-shadow: 0 0 0 2px rgba(255, 100, 100, 0.08);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-right: auto;
+}
+
+.chat-message p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.chat-message p:not(:last-child) {
+  margin-bottom: 0.5rem;
 }
 
 /* 解決済みメッセージ */
@@ -114,20 +228,30 @@
 
 /* 入力セクション */
 .chat-input-column {
-  position: sticky;
-  bottom: 0;
-  background-color: #fff;
-  border-top: 1px solid #ccc;
-  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  z-index: 1; /* 他要素より前面に出す */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  margin: 0 -0.5rem;
 }
 
 .chat-input-column textarea {
-  max-height: 100px;
   font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.chat-input-column textarea:focus {
+  outline: none;
+  border-color: #00c8e0;
+  box-shadow: 0 0 0 2px rgba(0, 200, 224, 0.1);
 }
 
 
@@ -142,17 +266,26 @@
   background-color: #00c8e0;
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 20px;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
-.chat-input-buttons button:hover {
+.chat-input-buttons button:hover:not(:disabled) {
   background-color: #00b0c0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 200, 224, 0.3);
+}
+
+.chat-input-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 

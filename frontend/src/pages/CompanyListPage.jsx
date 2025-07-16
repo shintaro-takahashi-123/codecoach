@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { StepContext } from "../contexts/StepContext";
 import { useNavigate } from "react-router-dom";
+import "../styles/CompanyListPage.css";
 
 const CompanyListPage = () => {
   const { formData } = useContext(StepContext);
@@ -40,47 +41,54 @@ const CompanyListPage = () => {
   }, [formData]);
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
-      <h2>あなたにマッチする企業（{companies.length}社）</h2>
-      {loading ? (
-        <div>読み込み中...</div>
-      ) : error ? (
-        <div style={{ color: "red" }}>{error}</div>
-      ) : companies.length === 0 ? (
-        <div>該当する企業がありません。</div>
-      ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
-          {companies.map((c, i) => (
-            <div
-              key={c.id || i}
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: 12,
-                padding: 18,
-                width: 250,
-                background: "#fafdff",
-                cursor: "pointer",
-              }}
-              onClick={() =>
-                navigate(`/company/${c.id || i}/analysis-result`, {
-                  state: { company: c },
-                })
-              }
-            >
-              <h3>{c.name}</h3>
-              <div>
-                📍 {c.location} / 💻 {c.techStack?.join(", ")}
-              </div>
-              <div>年収： {c.salaryRange}</div>
-              <div style={{ fontWeight: "bold", marginTop: 8 }}>
-                マッチ度: {c.matchRate}%
-              </div>
-              <div style={{ marginTop: 8 }}>{c.description}</div>
-            </div>
-          ))}
+    <>
+      <header className="codecoach-header">
+        <h1 className="header-title">CodeCoach</h1>
+      </header>
+      <div className="company-list-container">
+        <div className="company-list-header">
+          <h2 className="company-list-title">
+            あなたにマッチする企業
+            <span className="company-count">（{companies.length}社）</span>
+          </h2>
         </div>
-      )}
-    </div>
+
+        {loading ? (
+          <div className="loading-message">読み込み中...</div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : companies.length === 0 ? (
+          <div className="no-companies-message">該当する企業がありません。</div>
+        ) : (
+          <div className="companies-grid">
+            {companies.map((c, i) => (
+              <div
+                key={c.id || i}
+                className="company-card"
+                onClick={() =>
+                  navigate(`/company/${c.id || i}/analysis-result`, {
+                    state: { company: c },
+                  })
+                }
+              >
+                <h3 className="company-name">{c.name}</h3>
+                <div className="company-info">
+                  <div className="company-location">📍 {c.location}</div>
+                  <div className="company-tech-stack">
+                    💻 {c.techStack?.join(", ")}
+                  </div>
+                  <div className="company-salary">年収： {c.salaryRange}</div>
+                </div>
+                <div className="company-match-rate">
+                  マッチ度: {c.matchRate}%
+                </div>
+                <div className="company-description">{c.description}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

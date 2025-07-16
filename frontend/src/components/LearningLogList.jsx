@@ -32,6 +32,7 @@ const LearningLogList = ({ refreshKey }) => {
         {logs.map((log) => (
           <li key={log.id} className="log-item" onClick={() => handleClick(log.id)}>
             <strong>{log.problem_title || "(タイトルなし)"}</strong>
+            <br/>
             <span>{new Date(log.created_at).toLocaleString()}</span>
           </li>
         ))}

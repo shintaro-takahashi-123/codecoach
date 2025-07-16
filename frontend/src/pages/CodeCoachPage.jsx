@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import "../styles/CodeCoachPage.css";
 import { AuthContext } from "../contexts/AuthContext";
 import { FaPaperPlane } from "react-icons/fa";
@@ -19,10 +19,23 @@ const CodeCoachPage = () => {
   const [solved, setSolved] = useState(false);
   const [answer, setAnswer] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [chatSaved, setChatSaved] = useState(false);
 
 
   const [showTitleInput, setShowTitleInput] = useState(false);
   const [logTitle, setLogTitle] = useState("");
+  
+  const [sidebarWidth, setSidebarWidth] = useState(200);
+  const [isResizing, setIsResizing] = useState(false);
+  const [isFetchingModel, setIsFetchingModel] = useState(false);
+  
+  const chatAreaRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
 
   const handleSend = async () => {
     if (loading || (!problem.trim() && !userAnswer.trim())) return;
@@ -62,6 +75,11 @@ const CodeCoachPage = () => {
         setMessages((prev) => [...prev, ...assistantMessages]);
         setPending(d.next_hint?.text ? d.next_hint : null);
         setSolved(Boolean(d.solved));
+        if (Boolean(d.solved)) {
+          setIsFetchingModel(true);
+          await fetchModelAnswer();
+          setIsFetchingModel(false);
+        }
       } else {
         setMessages((prev) => [...prev, {
           role: "assistant",
@@ -86,7 +104,8 @@ const CodeCoachPage = () => {
       content: `ヒント${pending.step}: ${pending.text}`,
     }]);
     setShown(pending.step);
-    setPending(null);
+    
+    // setPending(null);
   };
 
   const fetchModelAnswer = async () => {
@@ -96,7 +115,7 @@ const CodeCoachPage = () => {
     const lastUserPrompt = [...messages].reverse().find((m) => m.role === "user")?.content || "";
 
     try {
-      const res = await api.post("/model_answers/generate", {
+      const res = await api.post("/api/model_answers/generate", {
         prompt: lastUserPrompt,
       });
 
@@ -128,6 +147,8 @@ const CodeCoachPage = () => {
   const handleSaveLog = async () => {
     try {
       const desc = messages.map((m) => `${m.role}:\n${m.content}`).join("\n\n");
+      console.log(answer)
+
   
       const payload = {
         problem_title: logTitle,
@@ -140,16 +161,17 @@ const CodeCoachPage = () => {
       const res = await api.post("/api/learning_logs", payload);
   
       if (res.data.status === "success") {
-        setProblem("");
-        setUserAnswer("");
-        setMessages([]);
-        setAnswer(null);
-        setSolved(false);
-        setShown(0);
+        // setProblem("");
+        // setUserAnswer("");
+        // setMessages([]);
+        // setAnswer(null);
+        // setShown(0);
         setPending(null);
-        setLogTitle("");
+        // setLogTitle("");
         setShowTitleInput(false);
+        setSolved(false); // 保存後は新しいセッションとして扱う
         
+        setChatSaved(true);
         setRefreshKey((prev) => prev + 1);
         alert("✅ 学習履歴に保存しました！");
       } else {
@@ -160,10 +182,60 @@ const CodeCoachPage = () => {
       alert("⚠️ サーバーエラーが発生しました。");
     }
   };
+
+  const handleChatDelete = async () =>{
+    if (!window.confirm("本当にこのチャットを削除しますか？")) return;
+
+    try {
+        setProblem("");
+        setUserAnswer("");
+        setMessages([]);
+        setAnswer(null);
+        setSolved(false);
+        setPending(null);
+        setShowTitleInput(false);
+        setShown(0);
+        setLogTitle("");
+        setChatSaved(false);
+        setIsFetchingModel(false);
+
+        
+    } catch (err) {
+      console.error("削除エラー:", err);
+    }
+  }
   
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing) return;
+    const newWidth = e.clientX;
+    if (newWidth >= 150 && newWidth <= 400) {
+      setSidebarWidth(newWidth);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+  };
+
+  React.useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isResizing]);
   
-  
-  
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   return (
     <div className="codecoach-layout">
@@ -172,17 +244,27 @@ const CodeCoachPage = () => {
       </header>
 
       <div className="codecoach-main">
-        <aside className="sidebar">
+        <aside className="sidebar" style={{ width: `${sidebarWidth}px` }}>
           <h3 className="sidebar-title">学習履歴</h3>
           <LearningLogList refreshKey={refreshKey} />
         </aside>
-
+        <div 
+          className="resize-handle"
+          onMouseDown={handleMouseDown}
+          style={{ cursor: isResizing ? 'col-resize' : 'ew-resize' }}
+        />
         <div className="main-panel">
-          <h2 className="greeting">
-            こんにちは <span className="highlighted-name">{userName}</span> さん
-          </h2>
 
-          <div className="chat-area">
+          <div className="title-div">
+            <h2 className="greeting">
+              こんにちは <span className="highlighted-name">{userName}</span> さん
+            </h2>
+            <button onClick={handleChatDelete} className="delete-chat-btn">
+              削除
+            </button>
+          </div>
+
+          <div className="chat-area" ref={chatAreaRef}>
             {messages.map((msg, index) => (
               <div key={index} className={`chat-message ${msg.role}`}>
                 {msg.content.includes("--- 模範解答 ---") ? (
@@ -204,23 +286,26 @@ const CodeCoachPage = () => {
           </div>
 
           <div className="chat-input-column">
-            <textarea
-              placeholder="📝 問題文を入力"
-              value={problem}
-              onChange={(e) => setProblem(e.target.value)}
-              rows={2}
-              style={{ maxHeight: "100px" }}
-            />
-            <textarea
-              placeholder="🧑‍💻 あなたの回答・質問・途中コードなどを入力"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              rows={3}
-              style={{ maxHeight: "120px" }}
-            />
+            {messages.length === 0 ? (
+              <textarea
+                placeholder="📝 問題文を入力"
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                rows={3}
+                style={{ maxHeight: "120px" }}
+              />
+            ) : (
+              <textarea
+                placeholder="🧑‍💻 あなたの回答・質問・途中コードなどを入力"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                rows={3}
+                style={{ maxHeight: "120px" }}
+              />
+            )}
 
             <div className="chat-input-buttons">
-              <button onClick={handleSend} disabled={loading}>
+              <button onClick={handleSend} disabled={loading || isFetchingModel || solved}>
                 <FaPaperPlane /> 送信
               </button>
               {pending && !solved && (
@@ -228,11 +313,11 @@ const CodeCoachPage = () => {
                   <FaLightbulb /> ヒント{pending.step}
                 </button>
               )}
-              {!answer && !loading && (pending === null || solved) && (
+              {/* {!answer && !loading && (pending === null || solved) && (
                 <button onClick={fetchModelAnswer} disabled={loading}>
                   模範解答を見る
                 </button>
-              )}
+              )} */}
             </div>
           </div>
 

@@ -5,6 +5,7 @@ set -e  # エラー時に即終了（デバッグ目的で必要ならコメン�
 cd /var/www
 
 echo "[ENTRYPOINT] Starting Laravel setup..."
+composer install
 
 # 環境ファイルがなければコピー
 if [ ! -f ".env" ]; then

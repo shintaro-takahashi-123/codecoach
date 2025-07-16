@@ -1,0 +1,152 @@
+.company-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f6fbf4;
+  min-height: 100vh;
+}
+
+.company-list-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.company-list-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.company-count {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.no-companies-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #666;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.companies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.company-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.company-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #00c8e0;
+}
+
+.company-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.company-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.company-location {
+  font-size: 0.95rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.company-tech-stack {
+  font-size: 0.95rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.company-salary {
+  font-size: 0.95rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.company-match-rate {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #00c8e0;
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #e0f7fa 0%, #f0f9ff 100%);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.company-description {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .company-list-container {
+    padding: 1rem;
+  }
+  
+  .companies-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .company-card {
+    padding: 1rem;
+  }
+  
+  .company-list-title {
+    font-size: 1.5rem;
+  }
+}
